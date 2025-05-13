@@ -1,0 +1,31 @@
+<div class="category-container">
+  <div class="container py-5">
+    <div class="section-header text-center mb-5">
+      <h2 class="display-5 fw-bold">{{ isArabic ? 'فرابيه' : 'Frappuccino' }}</h2>
+      <div class="divider mx-auto"></div>
+      <p class="lead text-muted">
+        {{ isArabic ? 'نكهات رائعة من الفرابيه المنعش' : 'Delicious frappé flavors to refresh your day' }}
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4" *ngFor="let product of products">
+        <div class="product-card">
+          <div class="product-image">
+            <img [src]="product.image" [alt]="isArabic ? product.nameAr : product.name">
+          </div>
+          <div class="product-details">
+            <h4 class="product-title">{{ isArabic ? product.nameAr : product.name }}</h4>
+            <div class="price-tag">{{ product.price }}₪</div>
+            <div class="ingredients">
+              <h6>{{ isArabic ? 'المكونات:' : 'Ingredients:' }}</h6>
+              <ul>
+                <li *ngFor="let i of isArabic ? product.ingredientsAr : product.ingredients">{{ i }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

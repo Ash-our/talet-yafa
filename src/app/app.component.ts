@@ -108,11 +108,95 @@ import { Router } from '@angular/router';
       margin-bottom: 0.25rem;
       display: block;
     }
-    
+    /* Custom bounce animation with 4s pause */
+.category-icon.fa-bounce {
+  animation: custom-bounce 5s cubic-bezier(.28,.84,.42,1) infinite;
+}
+@keyframes custom-bounce {
+  0%   { transform: translateY(0);}
+  10%  { transform: translateY(-8px);}
+  20%  { transform: translateY(0);}
+  100% { transform: translateY(0);}
+}
+
+/* Custom flip animation with 4s pause */
+.category-icon.fa-flip {
+  animation: custom-flip 5s linear infinite;
+}
+@keyframes custom-flip {
+  0%   { transform: rotateY(0);}
+  20%  { transform: rotateY(180deg);}
+  40%  { transform: rotateY(0);}
+  100% { transform: rotateY(0);}
+}
+
+/* Custom shake animation with 4s pause */
+.category-icon.fa-shake {
+  animation: custom-shake 5s linear infinite;
+}
+@keyframes custom-shake {
+  0%, 100% { transform: translateX(0);}
+  5%  { transform: translateX(-5px);}
+  10% { transform: translateX(5px);}
+  15% { transform: translateX(-5px);}
+  20% { transform: translateX(5px);}
+  25% { transform: translateX(0);}
+  100% { transform: translateX(0);}
+}
+
+/* Custom beat animation with 4s pause */
+.category-icon.fa-beat {
+  animation: custom-beat 5s linear infinite;
+}
+@keyframes custom-beat {
+  0%,100% { transform: scale(1);}
+  10% { transform: scale(1.2);}
+  20%,99% { transform: scale(1);}
+}
+
+/* Custom spin animation with 4s pause */
+.category-icon.fa-spin {
+  animation: custom-spin 5s linear infinite;
+}
+@keyframes custom-spin {
+  0%   { transform: rotate(0);}
+  20%  { transform: rotate(360deg);}
+  100% { transform: rotate(360deg);}
+}
+
+/* Custom beat-fade animation with 4s pause */
+.category-icon.fa-beat-fade {
+  animation: custom-beat-fade 5s linear infinite;
+}
+@keyframes custom-beat-fade {
+  0%,100% { opacity: 1; transform: scale(1);}
+  10% { opacity: 0.7; transform: scale(1.2);}
+  20%,99% { opacity: 1; transform: scale(1);}
+}
+
+/* Custom pulse animation with 4s pause */
+.category-icon.fa-pulse {
+  animation: custom-pulse 5s linear infinite;
+}
+@keyframes custom-pulse {
+  0%,100% { transform: scale(1);}
+  10% { transform: scale(1.1);}
+  20%,99% { transform: scale(1);}
+}
+
+/* Custom fade animation with 4s pause */
+.category-icon.fa-fade {
+  animation: custom-fade 5s linear infinite;
+}
+@keyframes custom-fade {
+  0%,100% { opacity: 1;}
+  10% { opacity: 0.5;}
+  20%,99% { opacity: 1;}
+}
     /* Mobile Category Navigation */
     .category-nav-mobile {
       display: none;
-      background-color: rgba(var(--primary-color-rgb), 0.05);
+      background-color: white;
       padding: 10px 0;
       position: sticky;
       top: 56px;

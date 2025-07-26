@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "massMenu": {
+    "massmenu": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "massMenu:build:production"
+              "buildTarget": "massmenu:build:production"
             },
             "development": {
-              "buildTarget": "massMenu:build:development"
+              "buildTarget": "massmenu:build:development"
             }
           },
           "defaultConfiguration": "development"

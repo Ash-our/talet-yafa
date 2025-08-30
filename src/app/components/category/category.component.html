@@ -1,0 +1,33 @@
+<div class="category-container">
+  <div class="container py-5">
+    <div class="section-header text-center mb-5">
+      <h2 class="display-5 fw-bold">{{ isArabic ? nameArabic : name }}</h2>
+      <div class="divider mx-auto"></div>
+      <p class="lead text-muted">
+        {{ isArabic ? catArabicPhrase : catPhrase }}
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-4" *ngFor="let product of items">
+        <div class="product-card">
+          <div class="product-image">
+            <img [src]="product.image" [alt]="isArabic ? product.nameArabic : product.name">
+          </div>
+          <div class="product-details">
+            <h4 class="product-title">{{ isArabic ? product.nameArabic : product.name }}</h4>
+            <div class="price-tag">{{ product.price }}₪</div>
+            <div class="ingredients">
+              <h6>{{ isArabic ? 'المكونات:' : 'Ingredients:' }}</h6>
+              <ul>
+                <li *ngFor="let i of isArabic ? product.ingredientsArabic : product.ingredients">
+                  {{ i }}
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

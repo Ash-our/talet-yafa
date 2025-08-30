@@ -2,6 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LanguageService } from '../services/language.service';
+import { firebaseService } from '../services/restaurant.service';
+
+interface Category {
+  key: string;
+  name: string;
+  nameArabic: string;
+  icon: string;
+}
 
 @Component({
   selector: 'app-home',
@@ -11,71 +19,21 @@ import { LanguageService } from '../services/language.service';
     <div class="hero-banner text-white">
       <div class="overlay d-flex align-items-center justify-content-center text-center">
         <div>
-          <h1 class="display-4 fw-bold">{{ isArabic ? 'مرحباً بكم في طلة يافا' : 'Welcome to Talat Yafa' }}</h1>
-          <p class="lead">{{ isArabic ? 'نكهات أصيلة، أجواء دافئة' : 'Authentic flavors, warm vibes.' }}</p>
+          <h1 class="display-4 fw-bold">
+            {{ isArabic ? 'مرحباً بكم في ' + (restaurant?.restArabicName || '') : 'Welcome to ' + (restaurant?.restName || '') }}
+          </h1>
+          <p class="lead">
+            {{ isArabic ? (restaurant?.restArabicPhrase || '') : (restaurant?.restPhrase || '') }}
+          </p>
           <!-- Explore Menu Navigation -->
           <div class="explore-menu mt-5">
             <h4 class="mb-4">{{ isArabic ? 'اكتشف نكهاتنا الرائعة' : 'Explore Our Menu' }}</h4>
             <div class="category-links">
-              <a routerLink="/hot-drinks" class="category-link">
+              <a *ngFor="let cat of categories" [routerLink]="['/category', cat.key]" class="category-link">
                 <div class="icon-container">
-                  <i class="fas fa-mug-saucer fa-bounce"></i>
+                  <i [class]="cat.icon"></i>
                 </div>
-                <span>{{ isArabic ? 'مشروبات ساخنة' : 'Hot Drinks' }}</span>
-              </a>
-              <a routerLink="/cold-drinks" class="category-link">
-                <div class="icon-container">
-                  <i class="fas fa-cube fa-flip"></i>
-                </div>
-                <span>{{ isArabic ? 'مشروبات باردة' : 'Cold Drinks' }}</span>
-              </a>
-              <a routerLink="/milkshakes" class="category-link">
-                <div class="icon-container">
-                  <i class="fas fa-blender fa-shake"></i>
-                </div>
-                <span>{{ isArabic ? 'ميلك شيك' : 'Milkshakes' }}</span>
-              </a>
-              <a routerLink="/frappuccino" class="category-link">
-                <div class="icon-container">
-                  <i class="fas fa-mug-hot fa-beat"></i>
-                </div>
-                <span>{{ isArabic ? 'فرابتشينو' : 'Frappuccino' }}</span>
-              </a>
-              <a routerLink="/natural-Juices" class="category-link">
-                <div class="icon-container">
-                  <i class="fas fa-apple-whole fa-beat-fade"></i>
-                </div>
-                <span>{{ isArabic ? 'عصائر طبيعية' : 'Natural Juices' }}</span>
-              </a>
-              <a routerLink="/cocktail" class="category-link">
-                <div class="icon-container">
-                  <i class="fas fa-champagne-glasses fa-flip"></i>
-                </div>
-                <span>{{ isArabic ? 'كوكتيل' : 'Cocktail' }}</span>
-              </a>
-              <a routerLink="/mojito" class="category-link">
-                <div class="icon-container">
-                  <i class="fa-solid fa-martini-glass"></i>
-                </div>
-                <span>{{ isArabic ? 'موهيتو' : 'Mojito' }}</span>
-              </a>
-              <a routerLink="/ices" class="category-link">
-                <div class="icon-container">
-                  <i class="fas fa-snowflake fa-pulse"></i>
-                </div>
-                <span>{{ isArabic ? 'ايسات' : 'Ices' }}</span>
-              </a>
-              <a routerLink="/dessert" class="category-link">
-                <div class="icon-container">
-                  <i class="fas fa-cookie-bite fa-bounce"></i>
-                </div>
-                <span>{{ isArabic ? 'حلويات' : 'Dessert' }}</span>
-              </a>
-              <a routerLink="/hookah" class="category-link">
-                <div class="icon-container">
-                  <i class="fas fa-wind fa-fade"></i>
-                </div>
-                <span>{{ isArabic ? 'أرجيلة' : 'Hookah' }}</span>
+                <span>{{ isArabic ? cat.nameArabic : cat.name }}</span>
               </a>
             </div>
           </div>
@@ -171,17 +129,27 @@ import { LanguageService } from '../services/language.service';
   `]
 })
 export class HomeComponent implements OnInit {
+  
   isArabic = false;
-  
+  restaurant: any = null;
+  categories: Category[] = [];
+
   constructor(private languageService: LanguageService) {}
-  
-  ngOnInit() {
-    // Subscribe to language changes
-    this.languageService.isArabic$.subscribe(isArabic => {
-      this.isArabic = isArabic;
-    });
-    
-    // Initialize with current language
+
+  async ngOnInit() {
+    this.languageService.isArabic$.subscribe(lang => this.isArabic = lang);
     this.isArabic = this.languageService.getCurrentLanguage();
+    const restaurants = await firebaseService.getAllRestaurants();
+    if (restaurants) {
+      const firstRestKey = Object.keys(restaurants)[0];
+      this.restaurant = restaurants[firstRestKey];
+      const categoriesObj = this.restaurant.menu?.categories || {};
+      this.categories = Object.entries(categoriesObj).map(([key, value]: [string, any]) => ({
+        key,
+        name: value.name || '',
+        nameArabic: value.nameArabic || '',
+        icon: value.icon || 'fas fa-utensils',
+      }));
+    }
   }
 }

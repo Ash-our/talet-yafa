@@ -19,10 +19,10 @@ import { Router } from '@angular/router';
           <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
             <li class="nav-item" *ngFor="let category of categories">
               <a class="nav-link d-flex flex-column align-items-center" 
-                 [routerLink]="category.path" 
+                 [routerLink]="['/category', category.key]" 
                  routerLinkActive="active">
                 <i [class]="category.icon + ' category-icon'"></i>
-                <span>{{ isArabic ? category.nameAr : category.name }}</span>
+                <span>{{ isArabic ? category.nameArabic : category.name }}</span>
               </a>
             </li>
           </ul>
@@ -42,11 +42,11 @@ import { Router } from '@angular/router';
       <div class="container">
         <div class="scrollable-nav">
           <a *ngFor="let category of categories" 
-             [routerLink]="category.path" 
+             [routerLink]="['/category', category.key]" 
              routerLinkActive="active" 
              class="category-item">
             <i [class]="category.icon"></i>
-            <span>{{ isArabic ? category.nameAr : category.name }}</span>
+            <span>{{ isArabic ? category.nameArabic : category.name }}</span>
           </a>
         </div>
       </div>
@@ -298,29 +298,31 @@ import { Router } from '@angular/router';
 export class AppComponent implements OnInit {
   isArabic = false;
   isLightTheme = false;
-  categories = [
-    { path: '/hot-drinks', name: 'Hot Drinks', nameAr: 'مشروبات ساخنة', icon: 'fas fa-mug-saucer fa-bounce' },
-    { path: '/cold-drinks', name: 'Cold Drinks', nameAr: 'مشروبات باردة', icon: 'fas fa-cube fa-flip' },
-    { path: '/milkshakes', name: 'Milkshakes', nameAr: 'ميلك شيك', icon: 'fas fa-blender fa-shake' },
-    { path: '/frappuccino', name: 'Frappuccino', nameAr: 'فرابتشينو', icon: 'fas fa-mug-hot fa-beat' },
-    { path: '/mojito', name: 'Mojito', nameAr: 'موهيتو', icon: 'fas fa-leaf fa-spin' },
-    { path: '/natural-Juices', name: 'Natural Juices', nameAr: 'عصائر طبيعية', icon: 'fas fa-apple-whole fa-beat-fade' },
-    { path: '/ices', name: 'Ices', nameAr: 'ايسات', icon: 'fas fa-snowflake fa-pulse' },
-    { path: '/hookah', name: 'Hookah', nameAr: 'أرجيلة', icon: 'fas fa-wind fa-fade' },
-    { path: '/cocktail', name: 'Cocktail', nameAr: 'كوكتيل', icon: 'fas fa-champagne-glasses fa-flip' },
-    { path: '/dessert', name: 'Dessert', nameAr: 'حلويات', icon: 'fas fa-cookie-bite fa-bounce' }
-  ];
+  categories: any[] = [];
 
   constructor(private languageService: LanguageService, private router: Router) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     // Subscribe to language changes
     this.languageService.isArabic$.subscribe(isArabic => {
       this.isArabic = isArabic;
     });
-    
-    // Initialize with saved language preference
     this.isArabic = this.languageService.getCurrentLanguage();
+
+    // Fetch categories from Firebase (same as HomeComponent)
+    const { firebaseService } = await import('./services/restaurant.service');
+    const restaurants = await firebaseService.getAllRestaurants();
+    if (restaurants) {
+      const firstRestKey = Object.keys(restaurants)[0];
+      const restaurant = restaurants[firstRestKey];
+      const categoriesObj = restaurant.menu?.categories || {};
+      this.categories = Object.entries(categoriesObj).map(([key, value]: [string, any]) => ({
+        key,
+        name: value.name || '',
+        nameArabic: value.nameArabic || '',
+        icon: value.icon || 'fas fa-utensils'
+      }));
+    }
   }
 
   toggleLanguage() {
